@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call - ConnectSphere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #7C3AED;
+            --accent: #EC4899;
+            --light: #F9FAFB;
+            --dark: #111827;
+            --gray: #6B7280;
+            --white: #FFFFFF;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        body {
+            background-color: #1F2937;
+            color: var(--white);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Video Call Container */
+        .video-call-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Main Video Area */
+        .main-video-area {
+            flex: 1;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--gray);
+        }
+
+        .video-placeholder i {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .participant-name {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+
+        .call-timer {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recording-indicator {
+            width: 12px;
+            height: 12px;
+            background: #EF4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        /* Self Video */
+        .self-video {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            width: 200px;
+            height: 150px;
+            background: #374151;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--primary);
+        }
+
+        .self-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            display: flex;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .control-btn.active {
+            background: var(--primary);
+        }
+
+        .control-btn.danger {
+            background: #EF4444;
+        }
+
+        .control-btn.danger:hover {
+            background: #DC2626;
+        }
+
+        /* Side Panel */
+        .side-panel {
+            width: 350px;
+            background: #111827;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #374151;
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid #374151;
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .panel-tab.active {
+            color: var(--white);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        /* Participants List */
+        .participants-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: #1F2937;
+            border-radius: 0.5rem;
+        }
+
+        .participant-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .participant-info {
+            flex: 1;
+        }
+
+        .participant-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .participant-status {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .participant-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .participant-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        .participant-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .muted-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            background: #EF4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.625rem;
+        }
+
+        /* Chat */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 80%;
+        }
+
+        .chat-message.own {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .chat-content {
+            background: #374151;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .chat-message.own .chat-content {
+            background: var(--primary);
+        }
+
+        .chat-text {
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #374151;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #374151;
+            border-radius: 2rem;
+            background: #1F2937;
+            color: var(--white);
+            font-size: 0.875rem;
+            resize: none;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Call Settings Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1F2937;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            border: 1px solid #374151;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--white);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #374151;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            color: var(--gray);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #374151;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--white);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .device-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #374151;
+            border-radius: 0.375rem;
+            background: #111827;
+            color: var(--white);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Screen Share Indicator */
+        .screen-share-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .side-panel {
+                position: absolute;
+                right: -350px;
+                height: 100%;
+                z-index: 100;
+                transition: right 0.3s;
+            }
+
+            .side-panel.active {
+                right: 0;
+            }
+
+            .self-video {
+                width: 120px;
+                height: 90px;
+            }
+
+            .control-panel {
+                padding: 0.75rem 1rem;
+                gap: 0.75rem;
+            }
+
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-call-container">
+        <!-- Main Video Area -->
+        <div class="main-video-area">
+            <video class="main-video" id="remoteVideo" autoplay playsinline></video>
+            <div class="video-placeholder" id="videoPlaceholder">
+                <i class="fas fa-user"></i>
+                <p>Waiting for participant to join...</p>
+            </div>
+            
+            <div class="participant-name" id="participantName">Sarah Chen</div>
+            
+            <div class="call-timer" id="callTimer">
+                <div class="recording-indicator" id="recordingIndicator" style="display: none;"></div>
+                <i class="fas fa-clock"></i>
+                <span id="timerDisplay">00:00</span>
+            </div>
+            
+            <div class="screen-share-indicator" id="screenShareIndicator" style="display: none;">
+                <i class="fas fa-desktop"></i>
+                <span>You are sharing your screen</span>
+            </div>
+            
+            <!-- Self Video -->
+            <div class="self-video">
+                <video id="localVideo" autoplay playsinline muted></video>
+            </div>
+            
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <button class="control-btn" id="micBtn" title="Toggle Microphone">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="control-btn" id="videoBtn" title="Toggle Camera">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="control-btn" id="screenBtn" title="Share Screen">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button class="control-btn" id="chatBtn" title="Toggle Chat">
+                    <i class="fas fa-comment"></i>
+                </button>
+                <button class="control-btn" id="recordBtn" title="Record Call">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="control-btn" id="settingsBtn" title="Call Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="control-btn danger" id="endCallBtn" title="End Call">
+                    <i class="fas fa-phone-slash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Side Panel -->
+        <aside class="side-panel" id="sidePanel">
+            <div class="panel-tabs">
+                <button class="panel-tab active" data-tab="participants">Participants</button>
+                <button class="panel-tab" data-tab="chat">Chat</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Participants Tab -->
+                <div class="tab-content active" id="participants">
+                    <div class="participants-list">
+                        <div class="participant-item">
+                            <div class="participant-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="participant-info">
+                                <div class="participant-name">Sarah Chen (Host)</div>
+                                <div class="participant-status">Speaking</div>
+                            </div>
+                            <div class="participant-actions">
+                                <button class="participant-btn" title="Mute">
+                                    <i class="fas fa-microphone-slash"></i>
+                                </button>
+                                <button class="participant-btn" title="Remove">
+                                    <i class="fas fa-user-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="participant-item">
+                            <div class="participant-avatar">
+                                <i class="fas fa-user"></i>
+                                <div class="muted-indicator">
+                                    <i class="fas fa-microphone-slash"></i>
+                                </div>
+                            </div>
+                            <div class="participant-info">
+                                <div class="participant-name">You</div>
+                                <div class="participant-status">Muted</div>
+                            </div>
+                            <div class="participant-actions">
+                                <button class="participant-btn" title="Mute">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Tab -->
+                <div class="tab-content" id="chat" style="display: none;">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-message">
+                                <div class="chat-avatar">SC</div>
+                                <div class="chat-content">
+                                    <div class="chat-text">Hey! Can you hear me clearly?</div>
+                                    <div class="chat-time">2:30 PM</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-message own">
+                                <div class="chat-avatar">JD</div>
+                                <div class="chat-content">
+                                    <div class="chat-text">Yes, I can hear you perfectly!</div>
+                                    <div class="chat-time">2:31 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+                            <button class="chat-send" id="chatSend">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Call Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Call Settings</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Audio</h3>
+                    <div class="setting-item">
+                        <div class="setting-label">Microphone</div>
+                        <select class="device-select" id="micSelect">
+                            <option>Default Microphone</option>
+                            <option>Headset Microphone</option>
+                            <option>External Microphone</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">Speaker</div>
+                        <select class="device-select" id="speakerSelect">
+                            <option>Default Speaker</option>
+                            <option>Headphones</option>
+                            <option>External Speaker</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">Noise Suppression</div>
+                        <div class="toggle-switch active" id="noiseSuppression">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Video</h3>
+                    <div class="setting-item">
+                        <div class="setting-label">Camera</div>
+                        <select class="device-select" id="cameraSelect">
+                            <option>Default Camera</option>
+                            <option>HD Webcam</option>
+                            <option>External Camera</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">Video Quality</div>
+                        <select class="device-select" id="qualitySelect">
+                            <option>HD (720p)</option>
+                            <option>Full HD (1080p)</option>
+                            <option>4K</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">Mirror Video</div>
+                        <div class="toggle-switch active" id="mirrorVideo">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Timer functionality
+        let startTime = Date.now();
+        let timerInterval;
+        
+        function updateTimer() {
+            const elapsed = Date.now() - startTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        timerInterval = setInterval(updateTimer, 1000);
+        
+        // Control buttons
+        const micBtn = document.getElementById('micBtn');
+        const videoBtn = document.getElementById('videoBtn');
+        const screenBtn = document.getElementById('screenBtn');
+        const chatBtn = document.getElementById('chatBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const endCallBtn = document.getElementById('endCallBtn');
+        
+        let isMicMuted = false;
+        let isVideoOff = false;
+        let isScreenSharing = false;
+        let isRecording = false;
+        
+        // Microphone toggle
+        micBtn.addEventListener('click', () => {
+            isMicMuted = !isMicMuted;
+            micBtn.classList.toggle('active');
+            micBtn.innerHTML = isMicMuted ? 
+                '<i class="fas fa-microphone-slash"></i>' : 
+                '<i class="fas fa-microphone"></i>';
+            
+            // Update participant status
+            const participantStatus = document.querySelector('.participant-item:last-child .participant-status');
+            participantStatus.textContent = isMicMuted ? 'Muted' : 'Speaking';
+            
+            // Update mute indicator
+            const muteIndicator = document.querySelector('.participant-item:last-child .muted-indicator');
+            if (isMicMuted) {
+                if (!muteIndicator) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'muted-indicator';
+                    indicator.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                    document.querySelector('.participant-item:last-child .participant-avatar').appendChild(indicator);
+                }
+            } else {
+                if (muteIndicator) {
+                    muteIndicator.remove();
+                }
+            }
+        });
+        
+        // Video toggle
+        videoBtn.addEventListener('click', () => {
+            isVideoOff = !isVideoOff;
+            videoBtn.classList.toggle('active');
+            videoBtn.innerHTML = isVideoOff ? 
+                '<i class="fas fa-video-slash"></i>' : 
+                '<i class="fas fa-video"></i>';
+            
+            // Toggle local video
+            const localVideo = document.getElementById('localVideo');
+            if (isVideoOff) {
+                localVideo.style.display = 'none';
+            } else {
+                localVideo.style.display = 'block';
+            }
+        });
+        
+        // Screen sharing toggle
+        screenBtn.addEventListener('click', () => {
+            isScreenSharing = !isScreenSharing;
+            screenBtn.classList.toggle('active');
+            document.getElementById('screenShareIndicator').style.display = 
+                isScreenSharing ? 'flex' : 'none';
+            
+            if (isScreenSharing) {
+                alert('Screen sharing started');
+            } else {
+                alert('Screen sharing stopped');
+            }
+        });
+        
+        // Chat toggle
+        chatBtn.addEventListener('click', () => {
+            const sidePanel = document.getElementById('sidePanel');
+            sidePanel.classList.toggle('active');
+        });
+        
+        // Recording toggle
+        recordBtn.addEventListener('click', () => {
+            isRecording = !isRecording;
+            recordBtn.classList.toggle('active');
+            document.getElementById('recordingIndicator').style.display = 
+                isRecording ? 'block' : 'none';
+            
+            if (isRecording) {
+                alert('Recording started');
+            } else {
+                alert('Recording stopped');
+            }
+        });
+        
+        // Settings modal
+        const settingsModal = document.getElementById('settingsModal');
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.classList.add('active');
+        });
+        
+        document.querySelector('.modal-close').addEventListener('click', () => {
+            settingsModal.classList.remove('active');
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        });
+        
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+            });
+        });
+        
+        // End call
+        endCallBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to end the call?')) {
+                clearInterval(timerInterval);
+                // In a real application, this would end the WebRTC call
+                window.location.href = 'feed.html';
+            }
+        });
+        
+        // Panel tabs
+        document.querySelectorAll('.panel-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).style.display = 'block';
+            });
+        });
+        
+        // Chat functionality
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        const chatMessages = document.getElementById('chatMessages');
+        
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = 'chat-message own';
+            messageEl.innerHTML = `
+                <div class="chat-avatar">JD</div>
+                <div class="chat-content">
+                    <div class="chat-text">${message}</div>
+                    <div class="chat-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageEl);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate reply
+            setTimeout(() => {
+                const replyEl = document.createElement('div');
+                replyEl.className = 'chat-message';
+                replyEl.innerHTML = `
+                    <div class="chat-avatar">SC</div>
+                    <div class="chat-content">
+                        <div class="chat-text">Thanks for your message!</div>
+                        <div class="chat-time">${time}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(replyEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+        
+        // Simulate remote video
+        setTimeout(() => {
+            document.getElementById('videoPlaceholder').style.display = 'none';
+            document.getElementById('remoteVideo').style.display = 'block';
+        }, 3000);
+        
+        // Simulate local video
+        setTimeout(() => {
+            const localVideo = document.getElementById('localVideo');
+            // In a real application, this would get the user's camera stream
+            localVideo.style.background = 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)';
+        }, 1000);
+    </script>
+</body>
+</html>

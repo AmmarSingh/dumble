@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debate Arena - ConnectSphere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #7C3AED;
+            --accent: #EC4899;
+            --light: #F9FAFB;
+            --dark: #111827;
+            --gray: #6B7280;
+            --white: #FFFFFF;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icon {
+            position: relative;
+            color: var(--gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .debate-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+
+        .debate-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .debate-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .debate-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .debate-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray);
+            border: 1px solid #E5E7EB;
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+        }
+
+        /* Search and Filter */
+        .search-filter-container {
+            background: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            background: var(--white);
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        /* Debate Categories */
+        .debate-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-chip {
+            padding: 0.5rem 1rem;
+            background: var(--white);
+            border: 1px solid #E5E7EB;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .category-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .category-chip.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* Debate Tabs */
+        .debate-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .debate-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .debate-tab.active {
+            color: var(--primary);
+        }
+
+        .debate-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        /* Debate Grid */
+        .debate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .debate-card {
+            background: var(--white);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .debate-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .debate-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .status-live {
+            background: #EF4444;
+            color: var(--white);
+        }
+
+        .status-upcoming {
+            background: #F59E0B;
+            color: var(--white);
+        }
+
+        .status-completed {
+            background: #10B981;
+            color: var(--white);
+        }
+
+        .debate-image {
+            height: 180px;
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .debate-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .debate-content {
+            padding: 1.5rem;
+        }
+
+        .debate-topic {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .debate-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--light);
+            color: var(--primary);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .debaters {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .debater {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .debater-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .debater-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .vs-divider {
+            color: var(--gray);
+            font-weight: 700;
+        }
+
+        .debate-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .debate-time {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .debate-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .debate-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .debate-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #E5E7EB;
+            background: var(--white);
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .debate-btn:hover {
+            background: var(--light);
+        }
+
+        .debate-btn.primary {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .debate-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Featured Debate */
+        .featured-debate {
+            background: var(--white);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .featured-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .featured-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .featured-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .featured-debaters {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured-debater {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .featured-debater-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .featured-debater-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .featured-debater-info p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .featured-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .featured-image {
+            height: 300px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 3rem 5% 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h4 {
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column ul li a {
+            color: #9CA3AF;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9CA3AF;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .debate-title {
+                font-size: 2rem;
+            }
+
+            .debate-actions {
+                flex-direction: column;
+            }
+
+            .search-filter-container {
+                flex-direction: column;
+            }
+
+            .search-container {
+                min-width: 100%;
+            }
+
+            .debate-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <i class="fas fa-globe-americas"></i>
+                ConnectSphere
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="feed.html">Feed</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="messages.html">Messages</a></li>
+                <li><a href="explore.html">Explore</a></li>
+                <li><a href="debate-lobby.html" class="active">Debates</a></li>
+                <li><a href="library.html">Library</a></li>
+            </ul>
+            <div class="user-menu">
+                <a href="notifications.html" class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </a>
+                <a href="profile.html" class="user-avatar">JD</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="debate-container">
+        <div class="debate-header">
+            <h1 class="debate-title">Debate Arena</h1>
+            <p class="debate-subtitle">Engage in intellectual discourse, challenge opponents, and showcase your reasoning skills in structured debates.</p>
+            <div class="debate-actions">
+                <a href="debate-challenge.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Start a Debate
+                </a>
+                <a href="debate-room.html" class="btn btn-secondary">
+                    <i class="fas fa-play"></i>
+                    Join Live Debate
+                </a>
+            </div>
+        </div>
+
+        <!-- Featured Debate -->
+        <div class="featured-debate">
+            <div class="debate-status status-live">LIVE NOW</div>
+            <div class="featured-content">
+                <div class="featured-info">
+                    <h2>AI Ethics: Friend or Foe?</h2>
+                    <p class="featured-description">
+                        Join this heated debate on whether artificial intelligence will ultimately benefit or harm humanity. 
+                        Our expert debaters will explore the ethical implications, potential risks, and transformative possibilities of AI.
+                    </p>
+                    <div class="featured-debaters">
+                        <div class="featured-debater">
+                            <div class="featured-debater-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="featured-debater-info">
+                                <h4>Dr. Sarah Chen</h4>
+                                <p>AI Researcher</p>
+                            </div>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="featured-debater">
+                            <div class="featured-debater-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="featured-debater-info">
+                                <h4>Mark Johnson</h4>
+                                <p>Tech Ethicist</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="featured-actions">
+                        <a href="debate-room.html?id=1" class="btn btn-primary">
+                            <i class="fas fa-play"></i>
+                            Watch Now
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-bell"></i>
+                            Set Reminder
+                        </a>
+                    </div>
+                </div>
+                <div class="featured-image">
+                    <img src="https://picsum.photos/seed/ai-debate/600/400.jpg" alt="AI Debate">
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter-container">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search debates by topic or debater...">
+            </div>
+            <select class="filter-select">
+                <option>All Categories</option>
+                <option>Technology</option>
+                <option>Science</option>
+                <option>Politics</option>
+                <option>Philosophy</option>
+                <option>Economics</option>
+            </select>
+            <select class="filter-select">
+                <option>Sort by: Popular</option>
+                <option>Sort by: Newest</option>
+                <option>Sort by: Upcoming</option>
+                <option>Sort by: Most Viewed</option>
+            </select>
+        </div>
+
+        <!-- Debate Categories -->
+        <div class="debate-categories">
+            <div class="category-chip active">All Topics</div>
+            <div class="category-chip">Technology</div>
+            <div class="category-chip">Science</div>
+            <div class="category-chip">Politics</div>
+            <div class="category-chip">Philosophy</div>
+            <div class="category-chip">Economics</div>
+            <div class="category-chip">Environment</div>
+            <div class="category-chip">Education</div>
+        </div>
+
+        <!-- Debate Tabs -->
+        <div class="debate-tabs">
+            <button class="debate-tab active" data-tab="active">Active Debates</button>
+            <button class="debate-tab" data-tab="upcoming">Scheduled</button>
+            <button class="debate-tab" data-tab="completed">Completed</button>
+        </div>
+
+        <!-- Debate Grid -->
+        <div class="debate-grid" id="debate-grid">
+            <!-- Active Debates Tab Content -->
+            <div class="tab-content active" id="active">
+                <div class="debate-card">
+                    <div class="debate-status status-live">LIVE</div>
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/climate/400/300.jpg" alt="Climate Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Climate Change: Human Responsibility</h3>
+                        <span class="debate-category">Environment</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">EW</div>
+                                <div class="debater-name">Emma Wilson</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">RD</div>
+                                <div class="debater-name">Robert Davis</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-clock"></i>
+                                Started 15 min ago
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-eye"></i>
+                                    2.3K
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-users"></i>
+                                    450
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="debate-room.html?id=2" class="debate-btn primary">Join Debate</a>
+                            <a href="#" class="debate-btn">Watch Later</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="debate-card">
+                    <div class="debate-status status-live">LIVE</div>
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/economy/400/300.jpg" alt="Economy Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Universal Basic Income: Solution or Problem?</h3>
+                        <span class="debate-category">Economics</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">LP</div>
+                                <div class="debater-name">Lisa Park</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">TH</div>
+                                <div class="debater-name">Tom Harris</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-clock"></i>
+                                Started 45 min ago
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-eye"></i>
+                                    3.7K
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-users"></i>
+                                    620
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="debate-room.html?id=3" class="debate-btn primary">Join Debate</a>
+                            <a href="#" class="debate-btn">Watch Later</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="debate-card">
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/education/400/300.jpg" alt="Education Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Traditional vs. Modern Education</h3>
+                        <span class="debate-category">Education</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">JL</div>
+                                <div class="debater-name">Jennifer Lee</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">DK</div>
+                                <div class="debater-name">Dr. Kevin Moore</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-clock"></i>
+                                2 hours ago
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-eye"></i>
+                                    5.1K
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-users"></i>
+                                    890
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="debate-room.html?id=4" class="debate-btn primary">Watch Replay</a>
+                            <a href="#" class="debate-btn">Share</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Debates Tab Content -->
+            <div class="tab-content" id="upcoming" style="display: none;">
+                <div class="debate-card">
+                    <div class="debate-status status-upcoming">UPCOMING</div>
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/space/400/300.jpg" alt="Space Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Space Exploration: Public vs. Private</h3>
+                        <span class="debate-category">Science</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">NP</div>
+                                <div class="debater-name">Dr. Neil Patel</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">SB</div>
+                                <div class="debater-name">Sarah Blake</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-calendar"></i>
+                                Tomorrow, 3:00 PM
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-users"></i>
+                                    234 registered
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="#" class="debate-btn primary">Register</a>
+                            <a href="#" class="debate-btn">Set Reminder</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="debate-card">
+                    <div class="debate-status status-upcoming">UPCOMING</div>
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/healthcare/400/300.jpg" alt="Healthcare Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Healthcare: Universal Right or Personal Responsibility?</h3>
+                        <span class="debate-category">Politics</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">MG</div>
+                                <div class="debater-name">Dr. Maria Garcia</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">JW</div>
+                                <div class="debater-name">James Wilson</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-calendar"></i>
+                                Dec 15, 5:00 PM
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-users"></i>
+                                    567 registered
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="#" class="debate-btn primary">Register</a>
+                            <a href="#" class="debate-btn">Set Reminder</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Debates Tab Content -->
+            <div class="tab-content" id="completed" style="display: none;">
+                <div class="debate-card">
+                    <div class="debate-status status-completed">COMPLETED</div>
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/ai/400/300.jpg" alt="AI Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Artificial Intelligence: Job Creator or Destroyer?</h3>
+                        <span class="debate-category">Technology</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">DK</div>
+                                <div class="debater-name">David Kim</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">AT</div>
+                                <div class="debater-name">Anna Thompson</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-calendar"></i>
+                                Dec 10, 2:00 PM
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    78% voted
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="debate-result.html?id=5" class="debate-btn primary">View Results</a>
+                            <a href="#" class="debate-btn">Watch Replay</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="debate-card">
+                    <div class="debate-status status-completed">COMPLETED</div>
+                    <div class="debate-image">
+                        <img src="https://picsum.photos/seed/philosophy/400/300.jpg" alt="Philosophy Debate">
+                    </div>
+                    <div class="debate-content">
+                        <h3 class="debate-topic">Free Will: Illusion or Reality?</h3>
+                        <span class="debate-category">Philosophy</span>
+                        <div class="debaters">
+                            <div class="debater">
+                                <div class="debater-avatar">PR</div>
+                                <div class="debater-name">Prof. Robert Chen</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="debater">
+                                <div class="debater-avatar">ES</div>
+                                <div class="debater-name">Dr. Emily Stone</div>
+                            </div>
+                        </div>
+                        <div class="debate-meta">
+                            <div class="debate-time">
+                                <i class="fas fa-calendar"></i>
+                                Dec 8, 4:00 PM
+                            </div>
+                            <div class="debate-stats">
+                                <div class="stat">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    65% voted
+                                </div>
+                            </div>
+                        </div>
+                        <div class="debate-actions">
+                            <a href="debate-result.html?id=6" class="debate-btn primary">View Results</a>
+                            <a href="#" class="debate-btn">Watch Replay</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Debate Arena</a></li>
+                    <li><a href="#">Digital Library</a></li>
+                    <li><a href="#">Video Platform</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="#">Guidelines</a></li>
+                    <li><a href="#">Moderation</a></li>
+                    <li><a href="#">Safety Center</a></li>
+                    <li><a href="#">Events</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">Status</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 ConnectSphere. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.debate-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.debate-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = tab.getAttribute('data-tab');
+                const content = document.getElementById(tabId);
+                if (content) {
+                    content.style.display = 'block';
+                }
+            });
+        });
+
+        // Category filtering
+        document.querySelectorAll('.category-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                // Remove active class from all chips
+                document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked chip
+                chip.classList.add('active');
+                
+                // In a real application, this would filter the debates
+                const category = chip.textContent.trim();
+                console.log('Filtering by category:', category);
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const debateCards = document.querySelectorAll('.debate-card');
+            
+            debateCards.forEach(card => {
+                const topic = card.querySelector('.debate-topic').textContent.toLowerCase();
+                const debaters = Array.from(card.querySelectorAll('.debater-name'))
+                    .map(el => el.textContent.toLowerCase())
+                    .join(' ');
+                
+                if (topic.includes(searchTerm) || debaters.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', () => {
+                // In a real application, this would filter the debates
+                console.log('Filter changed:', select.value);
+            });
+        });
+
+        // Debate card clicks
+        document.querySelectorAll('.debate-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on a button
+                if (e.target.closest('.debate-btn')) return;
+                
+                const topic = card.querySelector('.debate-topic').textContent;
+                const status = card.querySelector('.debate-status').textContent;
+                
+                // In a real application, this would navigate to the debate detail page
+                if (status === 'LIVE') {
+                    alert(`Joining live debate: ${topic}`);
+                } else if (status === 'UPCOMING') {
+                    alert(`Viewing upcoming debate: ${topic}`);
+                } else if (status === 'COMPLETED') {
+                    alert(`Viewing completed debate: ${topic}`);
+                }
+            });
+        });
+
+        // Prevent button clicks from triggering card click
+        document.querySelectorAll('.debate-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const action = btn.textContent.trim();
+                const topic = btn.closest('.debate-card').querySelector('.debate-topic').textContent;
+                
+                // In a real application, these would perform the actual actions
+                if (action === 'Join Debate') {
+                    alert(`Joining debate: ${topic}`);
+                } else if (action === 'Watch Replay') {
+                    alert(`Watching replay of: ${topic}`);
+                } else if (action === 'Register') {
+                    alert(`Registering for debate: ${topic}`);
+                } else if (action === 'Set Reminder') {
+                    alert(`Reminder set for: ${topic}`);
+                } else if (action === 'View Results') {
+                    alert(`Viewing results for: ${topic}`);
+                } else if (action === 'Watch Later') {
+                    alert(`Added to watch later: ${topic}`);
+                } else if (action === 'Share') {
+                    alert(`Sharing debate: ${topic}`);
+                }
+            });
+        });
+
+        // Auto-refresh live debates
+        setInterval(() => {
+            // In a real application, this would check for updates to live debates
+            const liveCards = document.querySelectorAll('.status-live');
+            liveCards.forEach(card => {
+                const stats = card.querySelector('.debate-stats');
+                if (stats) {
+                    const viewers = stats.querySelector('.stat:first-child');
+                    if (viewers) {
+                        const currentCount = parseInt(viewers.textContent.trim());
+                        // Simulate increasing viewer count
+                        viewers.innerHTML = `<i class="fas fa-eye"></i> ${currentCount + Math.floor(Math.random() * 10)}`;
+                    }
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

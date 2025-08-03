@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups - ConnectSphere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #7C3AED;
+            --accent: #EC4899;
+            --light: #F9FAFB;
+            --dark: #111827;
+            --gray: #6B7280;
+            --white: #FFFFFF;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icon {
+            position: relative;
+            color: var(--gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .groups-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+
+        .groups-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .groups-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray);
+            border: 1px solid #E5E7EB;
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+        }
+
+        /* Search and Filter */
+        .search-filter-container {
+            background: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            background: var(--white);
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        /* Groups Tabs */
+        .groups-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .groups-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .groups-tab.active {
+            color: var(--primary);
+        }
+
+        .groups-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        /* Groups Grid */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .group-card {
+            background: var(--white);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .group-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .group-cover {
+            height: 120px;
+            background: var(--gradient);
+            position: relative;
+        }
+
+        .group-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .group-avatar {
+            position: absolute;
+            bottom: -30px;
+            left: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .group-avatar i {
+            font-size: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .group-content {
+            padding: 2rem 1.5rem 1.5rem;
+        }
+
+        .group-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .group-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--light);
+            color: var(--primary);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .group-description {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .group-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .group-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .group-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #E5E7EB;
+            background: var(--white);
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .group-btn:hover {
+            background: var(--light);
+        }
+
+        .group-btn.primary {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .group-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Create Group Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .privacy-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .privacy-option {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .privacy-option:hover {
+            border-color: var(--primary);
+        }
+
+        .privacy-option.selected {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .privacy-option-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .privacy-option-desc {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 3rem 5% 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h4 {
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column ul li a {
+            color: #9CA3AF;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9CA3AF;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .groups-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .search-filter-container {
+                flex-direction: column;
+            }
+
+            .search-container {
+                min-width: 100%;
+            }
+
+            .groups-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <i class="fas fa-globe-americas"></i>
+                ConnectSphere
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="feed.html">Feed</a></li>
+                <li><a href="groups.html" class="active">Groups</a></li>
+                <li><a href="messages.html">Messages</a></li>
+                <li><a href="explore.html">Explore</a></li>
+                <li><a href="debate-lobby.html">Debates</a></li>
+                <li><a href="library.html">Library</a></li>
+            </ul>
+            <div class="user-menu">
+                <a href="notifications.html" class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </a>
+                <a href="profile.html" class="user-avatar">JD</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="groups-container">
+        <div class="groups-header">
+            <h1 class="groups-title">Groups</h1>
+            <button class="btn btn-primary" id="create-group-btn">
+                <i class="fas fa-plus"></i>
+                Create Group
+            </button>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter-container">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search groups...">
+            </div>
+            <select class="filter-select">
+                <option>All Categories</option>
+                <option>Technology</option>
+                <option>Science</option>
+                <option>Arts</option>
+                <option>Business</option>
+                <option>Education</option>
+            </select>
+            <select class="filter-select">
+                <option>Sort by: Popular</option>
+                <option>Sort by: Newest</option>
+                <option>Sort by: Active</option>
+            </select>
+        </div>
+
+        <!-- Groups Tabs -->
+        <div class="groups-tabs">
+            <button class="groups-tab active" data-tab="my-groups">My Groups</button>
+            <button class="groups-tab" data-tab="discover">Discover</button>
+            <button class="groups-tab" data-tab="suggested">Suggested</button>
+        </div>
+
+        <!-- Groups Grid -->
+        <div class="groups-grid" id="groups-grid">
+            <!-- My Groups Tab Content -->
+            <div class="tab-content active" id="my-groups">
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/tech1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Tech Innovators</h3>
+                        <span class="group-category">Technology</span>
+                        <p class="group-description">A community for tech enthusiasts to share ideas, collaborate on projects, and discuss the latest innovations in technology.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 2.3K members</span>
+                            <span><i class="fas fa-comments"></i> 45 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn">View Group</button>
+                            <button class="group-btn">Leave</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/debate1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Debate Masters</h3>
+                        <span class="group-category">Debate</span>
+                        <p class="group-description">Sharpen your argumentation skills and engage in thoughtful debates on various topics with fellow debaters.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 1.8K members</span>
+                            <span><i class="fas fa-comments"></i> 23 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn">View Group</button>
+                            <button class="group-btn">Leave</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/book1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Book Lovers Club</h3>
+                        <span class="group-category">Literature</span>
+                        <p class="group-description">A place for book enthusiasts to discuss their favorite reads, share recommendations, and connect with fellow readers.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 3.1K members</span>
+                            <span><i class="fas fa-comments"></i> 67 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn">View Group</button>
+                            <button class="group-btn">Leave</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discover Tab Content -->
+            <div class="tab-content" id="discover" style="display: none;">
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/science1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Science Explorers</h3>
+                        <span class="group-category">Science</span>
+                        <p class="group-description">Dive deep into scientific discoveries, research papers, and discussions about the latest breakthroughs in science.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 5.2K members</span>
+                            <span><i class="fas fa-comments"></i> 89 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn primary">Join Group</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/art1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Creative Minds</h3>
+                        <span class="group-category">Arts</span>
+                        <p class="group-description">A community for artists, designers, and creative individuals to share their work and get feedback.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 3.7K members</span>
+                            <span><i class="fas fa-comments"></i> 56 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn primary">Join Group</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/business1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Entrepreneur Hub</h3>
+                        <span class="group-category">Business</span>
+                        <p class="group-description">Connect with entrepreneurs, share business strategies, and discuss startup challenges and successes.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 4.5K members</span>
+                            <span><i class="fas fa-comments"></i> 72 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn primary">Join Group</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggested Tab Content -->
+            <div class="tab-content" id="suggested" style="display: none;">
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/fitness1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Fitness Enthusiasts</h3>
+                        <span class="group-category">Health & Fitness</span>
+                        <p class="group-description">Share workout routines, nutrition tips, and motivate each other to achieve fitness goals.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 6.8K members</span>
+                            <span><i class="fas fa-comments"></i> 94 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn primary">Join Group</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/travel1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Travel Buddies</h3>
+                        <span class="group-category">Travel</span>
+                        <p class="group-description">Share travel experiences, get recommendations, and find travel companions for your next adventure.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 8.2K members</span>
+                            <span><i class="fas fa-comments"></i> 112 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn primary">Join Group</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-cover">
+                        <img src="https://picsum.photos/seed/food1/400/200.jpg" alt="Group Cover">
+                        <div class="group-avatar">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <h3 class="group-name">Foodies United</h3>
+                        <span class="group-category">Food & Cooking</span>
+                        <p class="group-description">Share recipes, restaurant reviews, and culinary tips with fellow food enthusiasts.</p>
+                        <div class="group-stats">
+                            <span><i class="fas fa-users"></i> 7.5K members</span>
+                            <span><i class="fas fa-comments"></i> 103 posts/day</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="group-btn primary">Join Group</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Group Modal -->
+    <div class="modal" id="create-group-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Group</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="create-group-form">
+                    <div class="form-group">
+                        <label class="form-label" for="group-name">Group Name</label>
+                        <input type="text" id="group-name" class="form-control" placeholder="Enter group name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="group-description">Description</label>
+                        <textarea id="group-description" class="form-control" placeholder="What is your group about?" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="group-category">Category</label>
+                        <select id="group-category" class="form-control" required>
+                            <option value="">Select a category</option>
+                            <option value="technology">Technology</option>
+                            <option value="science">Science</option>
+                            <option value="arts">Arts</option>
+                            <option value="business">Business</option>
+                            <option value="education">Education</option>
+                            <option value="health">Health & Fitness</option>
+                            <option value="travel">Travel</option>
+                            <option value="food">Food & Cooking</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Privacy</label>
+                        <div class="privacy-options">
+                            <div class="privacy-option selected" data-privacy="public">
+                                <div class="privacy-option-title">
+                                    <i class="fas fa-globe"></i> Public
+                                </div>
+                                <div class="privacy-option-desc">Anyone can see and join this group</div>
+                            </div>
+                            <div class="privacy-option" data-privacy="private">
+                                <div class="privacy-option-title">
+                                    <i class="fas fa-lock"></i> Private
+                                </div>
+                                <div class="privacy-option-desc">Only members can see posts and join by approval</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="group-rules">Group Rules (Optional)</label>
+                        <textarea id="group-rules" class="form-control" placeholder="Add rules for your group members..."></textarea>
+                        <p class="form-hint">Members will need to agree to these rules when joining</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-primary" id="create-group-submit">Create Group</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Debate Arena</a></li>
+                    <li><a href="#">Digital Library</a></li>
+                    <li><a href="#">Video Platform</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="#">Guidelines</a></li>
+                    <li><a href="#">Moderation</a></li>
+                    <li><a href="#">Safety Center</a></li>
+                    <li><a href="#">Events</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">Status</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 ConnectSphere. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.groups-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.groups-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = tab.getAttribute('data-tab');
+                const content = document.getElementById(tabId);
+                if (content) {
+                    content.style.display = 'block';
+                }
+            });
+        });
+
+        // Create Group Modal
+        const createGroupBtn = document.getElementById('create-group-btn');
+        const createGroupModal = document.getElementById('create-group-modal');
+        const modalClose = document.querySelectorAll('.modal-close');
+        
+        createGroupBtn.addEventListener('click', () => {
+            createGroupModal.classList.add('active');
+        });
+        
+        modalClose.forEach(btn => {
+            btn.addEventListener('click', () => {
+                createGroupModal.classList.remove('active');
+            });
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === createGroupModal) {
+                createGroupModal.classList.remove('active');
+            }
+        });
+
+        // Privacy selection
+        document.querySelectorAll('.privacy-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.privacy-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Create Group Form
+        document.getElementById('create-group-submit').addEventListener('click', () => {
+            const groupName = document.getElementById('group-name').value;
+            const groupDescription = document.getElementById('group-description').value;
+            const groupCategory = document.getElementById('group-category').value;
+            const selectedPrivacy = document.querySelector('.privacy-option.selected').getAttribute('data-privacy');
+            
+            if (!groupName || !groupDescription || !groupCategory) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // In a real application, this would create the group
+            alert(`Group "${groupName}" created successfully!`);
+            createGroupModal.classList.remove('active');
+            
+            // Reset form
+            document.getElementById('create-group-form').reset();
+            document.querySelectorAll('.privacy-option').forEach(o => o.classList.remove('selected'));
+            document.querySelector('.privacy-option[data-privacy="public"]').classList.add('selected');
+        });
+
+        // Group Card Actions
+        document.querySelectorAll('.group-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on a button
+                if (e.target.closest('.group-btn')) return;
+                
+                const groupName = card.querySelector('.group-name').textContent;
+                // In a real application, this would navigate to the group detail page
+                alert(`Opening group: ${groupName}`);
+            });
+        });
+
+        // Group Button Actions
+        document.querySelectorAll('.group-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const action = btn.textContent.trim();
+                const groupName = btn.closest('.group-card').querySelector('.group-name').textContent;
+                
+                if (action === 'Join Group') {
+                    btn.textContent = 'Request Sent';
+                    btn.classList.remove('primary');
+                    btn.disabled = true;
+                } else if (action === 'Leave') {
+                    if (confirm(`Are you sure you want to leave "${groupName}"?`)) {
+                        btn.closest('.group-card').remove();
+                    }
+                } else if (action === 'View Group') {
+                    // In a real application, this would navigate to the group detail page
+                    alert(`Opening group: ${groupName}`);
+                }
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const groupCards = document.querySelectorAll('.group-card');
+            
+            groupCards.forEach(card => {
+                const groupName = card.querySelector('.group-name').textContent.toLowerCase();
+                const groupDescription = card.querySelector('.group-description').textContent.toLowerCase();
+                
+                if (groupName.includes(searchTerm) || groupDescription.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', () => {
+                // In a real application, this would filter the groups
+                console.log('Filter changed:', select.value);
+            });
+        });
+    </script>
+</body>
+</html>
