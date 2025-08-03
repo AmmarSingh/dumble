@@ -3,34 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitCore - Premium 8kg Dumbbells</title>
+    <title>Authentication - ConnectSphere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #7C3AED;
+            --accent: #EC4899;
+            --light: #F9FAFB;
+            --dark: #111827;
+            --gray: #6B7280;
+            --white: #FFFFFF;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
             line-height: 1.6;
-            color: #333;
-            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 2rem;
-            transition: all 0.3s ease;
+        /* Header Styles */
+        header {
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem 5%;
         }
 
-        .nav-container {
+        .auth-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,534 +51,522 @@
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        .nav-links {
             display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
             text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s ease;
         }
 
-        .nav-links a:hover {
-            color: #4CAF50;
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .cart-btn {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.3s ease;
+        .back-home {
+            color: var(--gray);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s;
         }
 
-        .cart-btn:hover {
-            transform: translateY(-2px);
+        .back-home:hover {
+            color: var(--primary);
         }
 
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Main Content */
+        main {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
+            padding: 2rem 5%;
+        }
+
+        .auth-container {
+            background: var(--white);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
             overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
-            animation: float 20s linear infinite;
+        .auth-tabs {
+            display: flex;
+            background: var(--light);
         }
 
-        @keyframes float {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-size: 1rem;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
+        .auth-tab.active {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .auth-content {
             padding: 2rem;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            opacity: 0;
-            animation: slideUp 1s ease 0.5s forwards;
+        .auth-form {
+            display: none;
         }
 
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0;
-            animation: slideUp 1s ease 0.7s forwards;
+        .auth-form.active {
+            display: block;
         }
 
-        .cta-button {
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
-            color: white;
-            padding: 1rem 2.5rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0;
-            animation: slideUp 1s ease 0.9s forwards;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+            width: 100%;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--white);
+            margin-bottom: 1rem;
         }
 
-        @keyframes slideUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        .hero h1, .hero p, .cta-button {
-            transform: translateY(30px);
-        }
-
-        /* Product Section */
-        .product-section {
-            padding: 5rem 2rem;
-            background: #f8f9fa;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+        .divider {
+            display: flex;
             align-items: center;
+            margin: 1.5rem 0;
+            color: var(--gray);
         }
 
-        .product-image {
-            position: relative;
-            text-align: center;
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
         }
 
-        .dumbbell-display {
-            width: 300px;
-            height: 200px;
-            background: linear-gradient(145deg, #e0e0e0, #ffffff);
-            border-radius: 20px;
-            margin: 0 auto;
+        .divider span {
+            padding: 0 1rem;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            background: var(--white);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            gap: 0.5rem;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .dumbbell-display:hover {
-            transform: rotateY(10deg) rotateX(5deg);
+        .social-btn:hover {
+            background: var(--light);
         }
 
-        .dumbbell-svg {
-            width: 200px;
-            height: 80px;
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray);
         }
 
-        .product-info h2 {
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 1rem;
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
         }
 
-        .price {
-            font-size: 2rem;
-            color: #4CAF50;
-            font-weight: bold;
-            margin-bottom: 1rem;
+        .form-footer a:hover {
+            text-decoration: underline;
         }
 
-        .features {
-            list-style: none;
-            margin-bottom: 2rem;
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 5px;
+            background: #E5E7EB;
+            border-radius: 5px;
+            overflow: hidden;
         }
 
-        .features li {
-            padding: 0.5rem 0;
-            position: relative;
-            padding-left: 2rem;
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background-color 0.3s;
         }
 
-        .features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-weight: bold;
+        .password-strength-meter.weak {
+            width: 33%;
+            background: #EF4444;
         }
 
-        .quantity-selector {
+        .password-strength-meter.medium {
+            width: 66%;
+            background: #F59E0B;
+        }
+
+        .password-strength-meter.strong {
+            width: 100%;
+            background: #10B981;
+        }
+
+        .form-checkbox {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .quantity-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #4CAF50;
-            background: white;
-            color: #4CAF50;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .quantity-btn:hover {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .quantity-display {
-            font-size: 1.2rem;
-            font-weight: bold;
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .add-to-cart {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            padding: 1rem 3rem;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-right: 1rem;
-        }
-
-        .add-to-cart:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
-        }
-
-        /* Workout Section */
-        .workout-section {
-            padding: 5rem 2rem;
-            background: white;
-        }
-
-        .workout-section h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .workout-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .workout-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 2rem;
-            border-radius: 20px;
-            color: white;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .workout-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .workout-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Reviews Section */
-        .reviews-section {
-            padding: 5rem 2rem;
-            background: #f8f9fa;
-        }
-
-        .reviews-section h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .review-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .review-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stars {
-            color: #FFD700;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .reviewer {
-            font-weight: bold;
-            color: #4CAF50;
-            margin-top: 1rem;
+        .form-checkbox input {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary);
         }
 
         /* Footer */
         footer {
-            background: #333;
-            color: white;
+            background: var(--dark);
+            color: var(--white);
+            padding: 1.5rem 5%;
             text-align: center;
-            padding: 3rem 2rem;
         }
 
-        /* Responsive */
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #9CA3AF;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
+            .auth-container {
+                max-width: 100%;
             }
-            
-            .hero h1 {
-                font-size: 2.5rem;
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
             }
-            
-            .nav-links {
-                display: none;
+
+            .social-login {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="#" class="logo">FitCore</a>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#product">Product</a></li>
-                <li><a href="#workouts">Workouts</a></li>
-                <li><a href="#reviews">Reviews</a></li>
-            </ul>
-            <button class="cart-btn" onclick="showCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+    <!-- Header -->
+    <header>
+        <div class="auth-header">
+            <a href="index.html" class="logo">
+                <i class="fas fa-globe-americas"></i>
+                ConnectSphere
+            </a>
+            <a href="index.html" class="back-home">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
         </div>
-    </nav>
+    </header>
 
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>Transform Your Fitness Journey</h1>
-            <p>Premium 8kg dumbbells designed for strength, endurance, and results</p>
-            <button class="cta-button" onclick="scrollToProduct()">Shop Now</button>
-        </div>
-    </section>
-
-    <section class="product-section" id="product">
-        <div class="container">
-            <div class="product-grid">
-                <div class="product-image">
-                    <div class="dumbbell-display" onclick="rotate3D()">
-                        <svg class="dumbbell-svg" viewBox="0 0 200 80">
-                            <defs>
-                                <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#C0C0C0;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#808080;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#606060;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Left weight -->
-                            <ellipse cx="30" cy="40" rx="25" ry="35" fill="url(#metalGradient)" stroke="#404040" stroke-width="2"/>
-                            <!-- Handle -->
-                            <rect x="55" y="35" width="90" height="10" fill="#404040" rx="5"/>
-                            <!-- Right weight -->
-                            <ellipse cx="170" cy="40" rx="25" ry="35" fill="url(#metalGradient)" stroke="#404040" stroke-width="2"/>
-                            <!-- 8kg labels -->
-                            <text x="30" y="45" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold" font-size="12">8kg</text>
-                            <text x="170" y="45" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold" font-size="12">8kg</text>
-                        </svg>
+    <!-- Main Content -->
+    <main>
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+                <button class="auth-tab" data-tab="forgot">Forgot Password</button>
+            </div>
+            <div class="auth-content">
+                <!-- Login Form -->
+                <form class="auth-form active" id="login-form">
+                    <h2 style="margin-bottom: 1.5rem;">Welcome Back</h2>
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="you@example.com" required>
                     </div>
-                </div>
-                <div class="product-info">
-                    <h2>Premium 8kg Dumbbells</h2>
-                    <div class="price">$89.99 <span style="text-decoration: line-through; color: #999; font-size: 1.5rem;">$120.00</span></div>
-                    <ul class="features">
-                        <li>Ergonomic non-slip grip handle</li>
-                        <li>Durable cast iron construction</li>
-                        <li>Perfect for home and gym workouts</li>
-                        <li>Ideal weight for strength training</li>
-                        <li>Compact and space-efficient design</li>
-                        <li>Free shipping & 2-year warranty</li>
-                    </ul>
-                    <div class="quantity-selector">
-                        <span>Quantity:</span>
-                        <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
-                        <span class="quantity-display" id="quantity">1</span>
-                        <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
-                    <button class="add-to-cart" style="background: #FF6B6B;" onclick="buyNow()">Buy Now</button>
-                </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="remember-me">
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login to Your Account</button>
+                    <div class="divider">
+                        <span>Or continue with</span>
+                    </div>
+                    <div class="social-login">
+                        <button type="button" class="social-btn">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </button>
+                        <button type="button" class="social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                            Facebook
+                        </button>
+                    </div>
+                    <div class="form-footer">
+                        Don't have an account? <a href="#" data-tab="signup">Sign up</a>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form class="auth-form" id="signup-form">
+                    <h2 style="margin-bottom: 1.5rem;">Create Your Account</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="signup-first">First Name</label>
+                            <input type="text" id="signup-first" class="form-control" placeholder="John" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-last">Last Name</label>
+                            <input type="text" id="signup-last" class="form-control" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" class="form-control" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-control" placeholder="••••••••" required>
+                        <div class="password-strength">
+                            <div class="password-strength-meter" id="password-meter"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="agree-terms" required>
+                        <label for="agree-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                    <div class="divider">
+                        <span>Or sign up with</span>
+                    </div>
+                    <div class="social-login">
+                        <button type="button" class="social-btn">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </button>
+                        <button type="button" class="social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                            Facebook
+                        </button>
+                    </div>
+                    <div class="form-footer">
+                        Already have an account? <a href="#" data-tab="login">Login</a>
+                    </div>
+                </form>
+
+                <!-- Forgot Password Form -->
+                <form class="auth-form" id="forgot-form">
+                    <h2 style="margin-bottom: 1.5rem;">Reset Your Password</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--gray);">Enter your email address and we'll send you a link to reset your password.</p>
+                    <div class="form-group">
+                        <label for="forgot-email">Email Address</label>
+                        <input type="email" id="forgot-email" class="form-control" placeholder="you@example.com" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                    <div class="form-footer">
+                        Remember your password? <a href="#" data-tab="login">Back to Login</a>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
+    </main>
 
-    <section class="workout-section" id="workouts">
-        <div class="container">
-            <h2>Perfect for These Workouts</h2>
-            <div class="workout-grid">
-                <div class="workout-card">
-                    <h3>💪 Strength Training</h3>
-                    <p>Build muscle mass and increase overall strength with compound movements like chest press, rows, and shoulder exercises.</p>
-                </div>
-                <div class="workout-card">
-                    <h3>🔥 HIIT Workouts</h3>
-                    <p>High-intensity interval training with dumbbell circuits for maximum calorie burn and cardiovascular benefits.</p>
-                </div>
-                <div class="workout-card">
-                    <h3>🏠 Home Fitness</h3>
-                    <p>Complete full-body workouts from the comfort of your home with this versatile and compact fitness solution.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="reviews-section" id="reviews">
-        <div class="container">
-            <h2>What Our Customers Say</h2>
-            <div class="reviews-grid">
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p>"Amazing quality! The grip is comfortable and the weight feels perfectly balanced. Great for my home workouts."</p>
-                    <div class="reviewer">- Sarah M.</div>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p>"Durable construction and fast shipping. These dumbbells have transformed my fitness routine completely."</p>
-                    <div class="reviewer">- Mike D.</div>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p>"Perfect weight for strength training. The non-slip grip gives me confidence during intense workouts."</p>
-                    <div class="reviewer">- Emma L.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- Footer -->
     <footer>
-        <div class="container">
-            <h3>FitCore</h3>
-            <p>Your partner in fitness excellence</p>
-            <p>&copy; 2025 FitCore. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Help Center</a>
+            <a href="#">Contact Us</a>
         </div>
+        <p>&copy; 2023 ConnectSphere. All rights reserved.</p>
     </footer>
 
     <script>
-        let quantity = 1;
-        let cartCount = 0;
+        // Tab switching functionality
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and forms
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding form
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-form`).classList.add('active');
+            });
+        });
 
-        function scrollToProduct() {
-            document.getElementById('product').scrollIntoView({ behavior: 'smooth' });
-        }
+        // Link switching functionality
+        document.querySelectorAll('[data-tab]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tabId = link.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and forms
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                
+                // Add active class to target tab and form
+                document.querySelector(`.auth-tab[data-tab="${tabId}"]`).classList.add('active');
+                document.getElementById(`${tabId}-form`).classList.add('active');
+            });
+        });
 
-        function changeQuantity(change) {
-            quantity = Math.max(1, quantity + change);
-            document.getElementById('quantity').textContent = quantity;
-        }
+        // Password strength meter
+        const passwordInput = document.getElementById('signup-password');
+        const passwordMeter = document.getElementById('password-meter');
 
-        function addToCart() {
-            cartCount += quantity;
-            document.getElementById('cart-count').textContent = cartCount;
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            let strength = 0;
             
-            // Add animation effect
-            const btn = event.target;
-            btn.style.transform = 'scale(0.95)';
-            btn.textContent = 'Added!';
-            setTimeout(() => {
-                btn.style.transform = 'scale(1)';
-                btn.textContent = 'Add to Cart';
-            }, 1000);
-        }
-
-        function buyNow() {
-            alert(`Proceeding to checkout with ${quantity} dumbbell(s) - Total: $${(89.99 * quantity).toFixed(2)}`);
-        }
-
-        function showCart() {
-            if (cartCount > 0) {
-                alert(`You have ${cartCount} item(s) in your cart. Total: $${(89.99 * cartCount).toFixed(2)}`);
+            // Check password strength
+            if (password.length >= 8) strength += 1;
+            if (password.match(/[a-z]+/)) strength += 1;
+            if (password.match(/[A-Z]+/)) strength += 1;
+            if (password.match(/[0-9]+/)) strength += 1;
+            if (password.match(/[$@#&!]+/)) strength += 1;
+            
+            // Update meter
+            passwordMeter.className = 'password-strength-meter';
+            if (strength <= 2) {
+                passwordMeter.classList.add('weak');
+            } else if (strength <= 4) {
+                passwordMeter.classList.add('medium');
             } else {
-                alert('Your cart is empty. Add some dumbbells first!');
+                passwordMeter.classList.add('strong');
             }
-        }
+        });
 
-        function rotate3D() {
-            const display = document.querySelector('.dumbbell-display');
-            display.style.transform = 'rotateY(360deg) rotateX(360deg)';
-            setTimeout(() => {
-                display.style.transform = 'rotateY(0deg) rotateX(0deg)';
-            }, 1000);
-        }
+        // Form submission handlers
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real application, this would send the login request to the server
+            alert('Login functionality would be implemented here');
+            // After successful login, redirect to the feed page
+            // window.location.href = 'feed.html';
+        });
 
-        // Scroll effect for navigation
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                nav.style.background = 'rgba(255, 255, 255, 0.98)';
-                nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
-            } else {
-                nav.style.background = 'rgba(255, 255, 255, 0.95)';
-                nav.style.boxShadow = 'none';
+        document.getElementById('signup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
             }
+            
+            // In a real application, this would send the signup request to the server
+            alert('Signup functionality would be implemented here');
+            // After successful signup, redirect to the feed page
+            // window.location.href = 'feed.html';
+        });
+
+        document.getElementById('forgot-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real application, this would send the password reset request to the server
+            alert('Password reset email would be sent here');
+        });
+
+        // Social login handlers
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const provider = btn.textContent.trim();
+                // In a real application, this would initiate OAuth flow
+                alert(`${provider} login would be implemented here`);
+            });
         });
     </script>
 </body>
